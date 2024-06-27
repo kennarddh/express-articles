@@ -1,0 +1,9 @@
+{
+	"extends": "./tsconfig.json",
+	"compilerOptions": {
+		"composite": true,
+		"allowJs": true
+	},
+	"include": ["scripts", "package.json"],
+	"exclude": ["src"]
+}
