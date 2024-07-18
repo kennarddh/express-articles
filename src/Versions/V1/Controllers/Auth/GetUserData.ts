@@ -44,9 +44,8 @@ class GetUserData extends BaseController {
 				},
 			})
 		} catch (error) {
-			Logger.error('GetUserData controller failed to get user', {
+			Logger.error('GetUserData controller failed to get user', error, {
 				id,
-				error,
 			})
 
 			return response.status(500).json({

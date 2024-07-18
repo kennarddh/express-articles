@@ -68,9 +68,8 @@ class Login extends BaseController {
 							},
 						})
 					} catch (error) {
-						Logger.error('Login controller failed to sign refresh token JWT', {
+						Logger.error('Login controller failed to sign refresh token JWT', error, {
 							username,
-							error,
 						})
 
 						return response.status(500).json({
@@ -79,9 +78,8 @@ class Login extends BaseController {
 						})
 					}
 				} catch (error) {
-					Logger.error('Login controller failed to sign token JWT', {
+					Logger.error('Login controller failed to sign token JWT', error, {
 						username,
-						error,
 					})
 
 					return response.status(500).json({
@@ -90,9 +88,8 @@ class Login extends BaseController {
 					})
 				}
 			} catch (error) {
-				Logger.error('Login controller failed verify hash', {
+				Logger.error('Login controller failed verify hash', error, {
 					username,
-					error,
 				})
 
 				return response.status(500).json({
@@ -101,9 +98,8 @@ class Login extends BaseController {
 				})
 			}
 		} catch (error) {
-			Logger.error('Login controller failed to get user', {
+			Logger.error('Login controller failed to get user', error, {
 				username,
-				error,
 			})
 
 			return response.status(500).json({

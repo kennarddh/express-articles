@@ -46,7 +46,7 @@ class CreateCategory extends BaseController {
 		return z.object({
 			name: z.string().trim().max(100).min(1),
 			description: z.string().trim().max(65535),
-			parentID: z.number().int(),
+			parentID: z.number().int().nullable(),
 		})
 	}
 }
