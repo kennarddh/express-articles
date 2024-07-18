@@ -15,6 +15,66 @@ class CreateCategory extends BaseController {
 		response: ExpressResponse,
 	) {
 		try {
+			const categoriesWithThisNameCount = await prisma.categories.count({
+				where: {
+					name: request.body.name,
+				},
+				select: { _all: true },
+			})
+
+			if (categoriesWithThisNameCount._all > 0) {
+				return response.status(403).json({
+					errors: {
+						others: [
+							`Cannot create category because there is another category with the same name.`,
+						],
+					},
+					data: {},
+				})
+			}
+		} catch (error) {
+			Logger.error(
+				'CreateCategory controller failed to count categories for unique name check',
+				error,
+			)
+
+			return response.status(500).json({
+				errors: { others: ['Internal server error'] },
+				data: {},
+			})
+		}
+
+		if (request.body.parentID !== null) {
+			try {
+				const categoriesWithThisIDCount = await prisma.categories.count({
+					where: {
+						id: request.body.parentID,
+					},
+					select: { _all: true },
+				})
+
+				if (categoriesWithThisIDCount._all <= 0) {
+					return response.status(403).json({
+						errors: {
+							others: [`Parent category doesn't exist.`],
+						},
+						data: {},
+					})
+				}
+			} catch (error) {
+				Logger.error(
+					'CreateCategory controller failed to count categories for valid parent category check',
+					error,
+				)
+
+				return response.status(500).json({
+					errors: { others: ['Internal server error'] },
+					data: {},
+				})
+			}
+		}
+
+		try {
 			const category = await prisma.categories.create({
 				data: {
 					name: request.body.name,
