@@ -21,6 +21,7 @@ class GetUserData extends BaseController {
 					id: true,
 					username: true,
 					name: true,
+					role: true,
 				},
 			})
 
@@ -41,6 +42,7 @@ class GetUserData extends BaseController {
 					id: user.id,
 					username: user.username,
 					name: user.name,
+					role: user.role,
 				},
 			})
 		} catch (error) {
