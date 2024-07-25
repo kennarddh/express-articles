@@ -15,18 +15,18 @@ class DeleteCategory extends BaseController {
 		response: ExpressResponse,
 	) {
 		try {
-			const articlesWithThisCategoryCount = await prisma.articles.count({
+			const isArticleWithThisCategoryExist = await prisma.articles.findFirst({
 				where: {
 					categoryID: request.params.id,
 				},
-				select: { _all: true },
+				select: { id: true },
 			})
 
-			if (articlesWithThisCategoryCount._all > 0) {
+			if (isArticleWithThisCategoryExist) {
 				return response.status(403).json({
 					errors: {
 						others: [
-							`Cannot delete category because there are still ${articlesWithThisCategoryCount._all} articles depends on this category.`,
+							`Cannot delete category because there are still articles depends on this category.`,
 						],
 					},
 					data: {},
@@ -42,11 +42,40 @@ class DeleteCategory extends BaseController {
 		}
 
 		try {
-			await prisma.categories.delete({
+			const isCategoryWithThisCategoryAsParentExist = !!(await prisma.categories.findFirst({
+				where: {
+					parentID: request.params.id,
+				},
+				select: { id: true },
+			}))
+
+			if (isCategoryWithThisCategoryAsParentExist) {
+				return response.status(422).json({
+					errors: {
+						others: [
+							`Cannot delete category because there are still categories depends on this as parent.`,
+						],
+					},
+					data: {},
+				})
+			}
+		} catch (error) {
+			Logger.error(
+				'DeleteCategory controller failed to count categories with this as parent',
+				error,
+			)
+
+			return response.status(500).json({
+				errors: { others: ['Internal server error'] },
+				data: {},
+			})
+		}
+
+		try {
+			await prisma.categories.deleteMany({
 				where: {
 					id: request.params.id,
 				},
-				select: {},
 			})
 
 			return response.status(204).send()
