@@ -1,7 +1,8 @@
 import jwt from 'jsonwebtoken'
+
 import { z } from 'zod'
 
-import { BaseController, EmptyObject, ExpressResponse, IControllerRequest } from 'Internals'
+import { BaseController, CelosiaResponse, EmptyObject, IControllerRequest } from '@celosiajs/core'
 
 import { ITokenJWTPayload } from 'Types/Types'
 
@@ -13,7 +14,7 @@ class RefreshToken extends BaseController {
 	public async index(
 		_: EmptyObject,
 		request: IControllerRequest<RefreshToken>,
-		response: ExpressResponse,
+		response: CelosiaResponse,
 	) {
 		const { refreshToken } = request.cookies
 
@@ -56,20 +57,14 @@ class RefreshToken extends BaseController {
 						},
 					)
 
-					return response.status(500).json({
-						errors: { others: ['Internal server error'] },
-						data: {},
-					})
+					return response.extensions.sendInternalServerError()
 				}
 			} catch (error) {
 				Logger.error('RefreshToken controller failed to sign token JWT', error, {
 					userID: user.id,
 				})
 
-				return response.status(500).json({
-					errors: { others: ['Internal server error'] },
-					data: {},
-				})
+				return response.extensions.sendInternalServerError()
 			}
 		} catch (error) {
 			if (error instanceof jwt.TokenExpiredError)
@@ -86,10 +81,7 @@ class RefreshToken extends BaseController {
 
 			Logger.error('Unknown error while verifying refresh token', error)
 
-			return response.status(500).json({
-				errors: { others: ['Internal server error'] },
-				data: {},
-			})
+			return response.extensions.sendInternalServerError()
 		}
 	}
 

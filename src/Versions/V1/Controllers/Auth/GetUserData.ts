@@ -1,4 +1,4 @@
-import { BaseController, ExpressResponse, IControllerRequest } from 'Internals'
+import { BaseController, CelosiaResponse, IControllerRequest } from '@celosiajs/core'
 
 import Logger from 'Utils/Logger/Logger'
 
@@ -10,7 +10,7 @@ class GetUserData extends BaseController {
 	public async index(
 		data: JWTVerifiedData,
 		_: IControllerRequest<GetUserData>,
-		response: ExpressResponse,
+		response: CelosiaResponse,
 	) {
 		const id = data.user.id
 
@@ -26,14 +26,9 @@ class GetUserData extends BaseController {
 			})
 
 			if (!user) {
-				Logger.error("Can't find user in GetUserData controller", {
-					id,
-				})
+				Logger.error("Can't find user in GetUserData controller", { id })
 
-				return response.status(500).json({
-					errors: { others: ['Internal server error'] },
-					data: {},
-				})
+				return response.extensions.sendInternalServerError()
 			}
 
 			return response.status(200).json({
@@ -46,14 +41,9 @@ class GetUserData extends BaseController {
 				},
 			})
 		} catch (error) {
-			Logger.error('GetUserData controller failed to get user', error, {
-				id,
-			})
+			Logger.error('GetUserData controller failed to get user', error, { id })
 
-			return response.status(500).json({
-				errors: { others: ['Internal server error'] },
-				data: {},
-			})
+			return response.extensions.sendInternalServerError()
 		}
 	}
 }

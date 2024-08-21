@@ -1,6 +1,6 @@
-import { Role } from '@prisma/client'
+import { CelosiaRouter } from '@celosiajs/core'
 
-import { ExpressRouter } from 'Internals'
+import { Role } from '@prisma/client'
 
 import RateLimiter from 'Middlewares/RateLimiter'
 import RequiredRole from 'Middlewares/RequiredRole'
@@ -14,7 +14,7 @@ import {
 	UpdateCategory,
 } from 'Versions/V1/Controllers/Categories'
 
-const CategoriesRouter = new ExpressRouter({ strict: true })
+const CategoriesRouter = new CelosiaRouter({ strict: true })
 
 // TODO: Only admin can create category
 

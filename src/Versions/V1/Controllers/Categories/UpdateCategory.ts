@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { BaseController, ExpressResponse, IControllerRequest } from 'Internals'
+import { BaseController, CelosiaResponse, IControllerRequest } from '@celosiajs/core'
 
 import Logger from 'Utils/Logger/Logger'
 
@@ -12,8 +12,30 @@ class UpdateCategory extends BaseController {
 	public async index(
 		_: JWTVerifiedData,
 		request: IControllerRequest<UpdateCategory>,
-		response: ExpressResponse,
+		response: CelosiaResponse,
 	) {
+		try {
+			const isCategoryExist = !!(await prisma.categories.findFirst({
+				where: {
+					id: request.params.id,
+				},
+				select: { id: true },
+			}))
+
+			if (!isCategoryExist) {
+				return response.status(404).json({
+					errors: {
+						others: [`Category not found.`],
+					},
+					data: {},
+				})
+			}
+		} catch (error) {
+			Logger.error('UpdateCategory controller failed to find category with id', error)
+
+			return response.extensions.sendInternalServerError()
+		}
+
 		try {
 			await prisma.categories.update({
 				where: {
@@ -24,17 +46,14 @@ class UpdateCategory extends BaseController {
 					description: request.body.description,
 					parentID: request.body.parentID,
 				},
-				select: {},
+				select: { id: true },
 			})
 
 			return response.status(204).send()
 		} catch (error) {
 			Logger.error('CreateCategory controller failed to update category', error)
 
-			return response.status(500).json({
-				errors: { others: ['Internal server error'] },
-				data: {},
-			})
+			return response.extensions.sendInternalServerError()
 		}
 	}
 
@@ -48,7 +67,7 @@ class UpdateCategory extends BaseController {
 		return z.object({
 			name: z.string().trim().max(100).min(1),
 			description: z.string().trim().max(65535),
-			parentID: z.number().int(),
+			parentID: z.number().int().nullable(),
 		})
 	}
 }

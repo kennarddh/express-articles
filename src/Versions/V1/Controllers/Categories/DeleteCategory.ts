@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { BaseController, ExpressResponse, IControllerRequest } from 'Internals'
+import { BaseController, CelosiaResponse, IControllerRequest } from '@celosiajs/core'
 
 import Logger from 'Utils/Logger/Logger'
 
@@ -12,7 +12,7 @@ class DeleteCategory extends BaseController {
 	public async index(
 		_: JWTVerifiedData,
 		request: IControllerRequest<DeleteCategory>,
-		response: ExpressResponse,
+		response: CelosiaResponse,
 	) {
 		try {
 			const isArticleWithThisCategoryExist = await prisma.articles.findFirst({
@@ -35,10 +35,7 @@ class DeleteCategory extends BaseController {
 		} catch (error) {
 			Logger.error('DeleteCategory controller failed to count articles with category', error)
 
-			return response.status(500).json({
-				errors: { others: ['Internal server error'] },
-				data: {},
-			})
+			return response.extensions.sendInternalServerError()
 		}
 
 		try {
@@ -65,10 +62,7 @@ class DeleteCategory extends BaseController {
 				error,
 			)
 
-			return response.status(500).json({
-				errors: { others: ['Internal server error'] },
-				data: {},
-			})
+			return response.extensions.sendInternalServerError()
 		}
 
 		try {
@@ -82,10 +76,7 @@ class DeleteCategory extends BaseController {
 		} catch (error) {
 			Logger.error('DeleteCategory controller failed to delete category', error)
 
-			return response.status(500).json({
-				errors: { others: ['Internal server error'] },
-				data: {},
-			})
+			return response.extensions.sendInternalServerError()
 		}
 	}
 

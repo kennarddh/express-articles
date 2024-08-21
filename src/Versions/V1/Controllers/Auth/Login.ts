@@ -1,7 +1,8 @@
 import argon2 from 'argon2'
+
 import { z } from 'zod'
 
-import { BaseController, EmptyObject, ExpressResponse, IControllerRequest } from 'Internals'
+import { BaseController, CelosiaResponse, EmptyObject, IControllerRequest } from '@celosiajs/core'
 
 import { ITokenJWTPayload } from 'Types/Types'
 
@@ -14,7 +15,7 @@ class Login extends BaseController {
 	public async index(
 		_: EmptyObject,
 		request: IControllerRequest<Login>,
-		response: ExpressResponse,
+		response: CelosiaResponse,
 	) {
 		const { username, password } = request.body
 
@@ -72,40 +73,28 @@ class Login extends BaseController {
 							username,
 						})
 
-						return response.status(500).json({
-							errors: { others: ['Internal server error'] },
-							data: {},
-						})
+						return response.extensions.sendInternalServerError()
 					}
 				} catch (error) {
 					Logger.error('Login controller failed to sign token JWT', error, {
 						username,
 					})
 
-					return response.status(500).json({
-						errors: { others: ['Internal server error'] },
-						data: {},
-					})
+					return response.extensions.sendInternalServerError()
 				}
 			} catch (error) {
 				Logger.error('Login controller failed verify hash', error, {
 					username,
 				})
 
-				return response.status(500).json({
-					errors: { others: ['Internal server error'] },
-					data: {},
-				})
+				return response.extensions.sendInternalServerError()
 			}
 		} catch (error) {
 			Logger.error('Login controller failed to get user', error, {
 				username,
 			})
 
-			return response.status(500).json({
-				errors: { others: ['Internal server error'] },
-				data: {},
-			})
+			return response.extensions.sendInternalServerError()
 		}
 	}
 

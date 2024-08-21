@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { BaseController, ExpressResponse, IControllerRequest } from 'Internals'
+import { BaseController, CelosiaResponse, IControllerRequest } from '@celosiajs/core'
 
 import Logger from 'Utils/Logger/Logger'
 
@@ -12,7 +12,7 @@ class CreateCategory extends BaseController {
 	public async index(
 		_: JWTVerifiedData,
 		request: IControllerRequest<CreateCategory>,
-		response: ExpressResponse,
+		response: CelosiaResponse,
 	) {
 		try {
 			const categoriesWithThisNameCount = await prisma.categories.count({
@@ -38,10 +38,7 @@ class CreateCategory extends BaseController {
 				error,
 			)
 
-			return response.status(500).json({
-				errors: { others: ['Internal server error'] },
-				data: {},
-			})
+			return response.extensions.sendInternalServerError()
 		}
 
 		if (request.body.parentID !== null) {
@@ -67,10 +64,7 @@ class CreateCategory extends BaseController {
 					error,
 				)
 
-				return response.status(500).json({
-					errors: { others: ['Internal server error'] },
-					data: {},
-				})
+				return response.extensions.sendInternalServerError()
 			}
 		}
 
@@ -95,10 +89,7 @@ class CreateCategory extends BaseController {
 		} catch (error) {
 			Logger.error('CreateCategory controller failed to create category', error)
 
-			return response.status(500).json({
-				errors: { others: ['Internal server error'] },
-				data: {},
-			})
+			return response.extensions.sendInternalServerError()
 		}
 	}
 

@@ -1,7 +1,8 @@
 import argon2 from 'argon2'
+
 import { z } from 'zod'
 
-import { BaseController, EmptyObject, ExpressResponse, IControllerRequest } from 'Internals'
+import { BaseController, CelosiaResponse, EmptyObject, IControllerRequest } from '@celosiajs/core'
 
 import Logger from 'Utils/Logger/Logger'
 
@@ -11,7 +12,7 @@ class Register extends BaseController {
 	public async index(
 		_: EmptyObject,
 		request: IControllerRequest<Register>,
-		response: ExpressResponse,
+		response: CelosiaResponse,
 	) {
 		const { username, name, password } = request.body
 
@@ -29,7 +30,7 @@ class Register extends BaseController {
 		} catch (error) {
 			Logger.error('Register controller username validation findFirst error', error)
 
-			throw new Error('Internal Server Error')
+			return response.extensions.sendInternalServerError()
 		}
 
 		const hashedPassword = await argon2.hash(password, {
@@ -54,10 +55,7 @@ class Register extends BaseController {
 		} catch (error) {
 			Logger.error('Register controller failed to create user', error, { username })
 
-			return response.status(500).json({
-				errors: { others: ['Internal server error'] },
-				data: {},
-			})
+			return response.extensions.sendInternalServerError()
 		}
 	}
 

@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { BaseController, EmptyObject, ExpressResponse, IControllerRequest } from 'Internals'
+import { BaseController, CelosiaResponse, EmptyObject, IControllerRequest } from '@celosiajs/core'
 
 import Logger from 'Utils/Logger/Logger'
 
@@ -10,7 +10,7 @@ class GetCategoryByID extends BaseController {
 	public async index(
 		_: EmptyObject,
 		request: IControllerRequest<GetCategoryByID>,
-		response: ExpressResponse,
+		response: CelosiaResponse,
 	) {
 		try {
 			const category = await prisma.categories.findFirst({
@@ -42,10 +42,7 @@ class GetCategoryByID extends BaseController {
 		} catch (error) {
 			Logger.error('GetCategoryByID controller failed to find category', error)
 
-			return response.status(500).json({
-				errors: { others: ['Internal server error'] },
-				data: {},
-			})
+			return response.extensions.sendInternalServerError()
 		}
 	}
 

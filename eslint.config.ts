@@ -1,6 +1,6 @@
 import js from '@eslint/js'
 import { FlatConfig } from '@typescript-eslint/utils/ts-eslint'
-import importPlugin from 'eslint-plugin-import'
+// import importPlugin from 'eslint-plugin-import'
 import prettier from 'eslint-plugin-prettier'
 import prettierRecommended from 'eslint-plugin-prettier/recommended'
 import security from 'eslint-plugin-security'
@@ -9,6 +9,8 @@ import tsEslint from 'typescript-eslint'
 
 // TODO: Enable eslint-plugin-import again when it supports flat config by uncommenting all commented lines
 // https://github.com/import-js/eslint-plugin-import/issues/2556
+
+// Also eslint-import-resolver-typescript
 
 export default tsEslint.config(
 	{ ignores: ['build/**/*', 'eslint.config.d.ts', 'eslint.config.js'] },
@@ -34,23 +36,12 @@ export default tsEslint.config(
 	...tsEslint.configs.stylisticTypeChecked,
 	prettierRecommended,
 	{
+		name: 'Prettier Warn',
 		plugins: {
-			'@typescript-eslint': tsEslint.plugin,
 			prettier,
 		},
 		rules: {
-			'@typescript-eslint/require-await': 'off',
 			'prettier/prettier': 'warn',
-			'@typescript-eslint/no-unused-vars': [
-				'warn',
-				{
-					argsIgnorePattern: '^_',
-					caughtErrorsIgnorePattern: '^_',
-					destructuredArrayIgnorePattern: '^_',
-					varsIgnorePattern: '^_',
-				},
-			],
-			'@typescript-eslint/no-confusing-void-expression': 'off',
 		},
 	},
 	{
@@ -67,19 +58,10 @@ export default tsEslint.config(
 				'error',
 				{ allow: ['private-constructors', 'protected-constructors'] },
 			],
-			'@typescript-eslint/no-confusing-void-expression': [
-				'error',
-				{
-					ignoreArrowShorthand: true,
-					ignoreVoidOperator: true,
-				},
-			],
 			'@typescript-eslint/no-misused-promises': [
 				'error',
 				{
-					checksVoidReturn: {
-						arguments: false,
-					},
+					checksVoidReturn: false,
 				},
 			],
 			'@typescript-eslint/restrict-template-expressions': [
@@ -88,6 +70,17 @@ export default tsEslint.config(
 					allowNumber: true,
 				},
 			],
+			'@typescript-eslint/require-await': 'off',
+			'@typescript-eslint/no-unused-vars': [
+				'warn',
+				{
+					argsIgnorePattern: '^_',
+					caughtErrorsIgnorePattern: '^_',
+					destructuredArrayIgnorePattern: '^_',
+					varsIgnorePattern: '^_',
+				},
+			],
+			'@typescript-eslint/no-confusing-void-expression': 'off',
 			// 'import/prefer-default-export': 'off',
 			// 'import/extensions': ['warn', { ts: 'never', json: 'never' }],
 		},
@@ -105,15 +98,15 @@ export default tsEslint.config(
 			},
 		},
 		plugins: {
-			import: importPlugin,
+			// import: importPlugin,
 		},
 		rules: {
-			'import/no-extraneous-dependencies': [
-				'error',
-				{
-					devDependencies: true,
-				},
-			],
+			// 'import/no-extraneous-dependencies': [
+			// 	'error',
+			// 	{
+			// 		devDependencies: true,
+			// 	},
+			// ],
 		},
 	},
 	{

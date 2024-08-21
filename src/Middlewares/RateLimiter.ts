@@ -1,6 +1,13 @@
-import { RateLimiterAbstract, RateLimiterMemory, RateLimiterRes } from 'rate-limiter-flexible'
+import {
+	BaseMiddleware,
+	CelosiaRequest,
+	CelosiaResponse,
+	EmptyObject,
+	INextFunction,
+} from '@celosiajs/core'
+import '@celosiajs/extensions'
 
-import { BaseMiddleware, EmptyObject, ExpressRequest, ExpressResponse, StopHere } from 'Internals'
+import { RateLimiterAbstract, RateLimiterMemory, RateLimiterRes } from 'rate-limiter-flexible'
 
 import Logger from 'Utils/Logger/Logger'
 
@@ -28,8 +35,9 @@ class RateLimiter extends BaseMiddleware {
 
 	public override async index(
 		data: EmptyObject | JWTVerifiedData,
-		request: ExpressRequest,
-		response: ExpressResponse,
+		request: CelosiaRequest,
+		response: CelosiaResponse,
+		next: INextFunction,
 	) {
 		if ('user' in data && this.useUserRateLimiterIfPossible) {
 			try {
@@ -40,40 +48,28 @@ class RateLimiter extends BaseMiddleware {
 
 				this.handleRateLimiterRes(response, userRateLimiter, rateLimiterRes)
 
-				return
+				return next()
 			} catch (error: unknown) {
 				if (error instanceof RateLimiterRes) {
 					const rateLimiterRes = error
 
 					this.handleRateLimiterRes(response, userRateLimiter, rateLimiterRes)
 
-					response
+					return response
 						.status(429)
 						.json({ errors: { others: ['Rate limit exceeded'] }, data: {} })
-
-					return StopHere
 				}
 
 				Logger.error('User rate limiter error', error)
 
-				response.status(500).json({
-					errors: { others: ['Internal server error'] },
-					data: {},
-				})
-
-				return StopHere
+				return response.extensions.sendInternalServerError()
 			}
 		}
 
 		if (request.ip === undefined) {
 			Logger.warn('Rate limiter undefined ip')
 
-			response.status(500).json({
-				errors: { others: ['Internal server error'] },
-				data: {},
-			})
-
-			return StopHere
+			return response.extensions.sendInternalServerError()
 		}
 
 		try {
@@ -82,30 +78,23 @@ class RateLimiter extends BaseMiddleware {
 			this.handleRateLimiterRes(response, ipRateLimiter, rateLimiterRes)
 		} catch (error: unknown) {
 			if (error instanceof RateLimiterRes) {
-				const rateLimiterRes = error
+				this.handleRateLimiterRes(response, ipRateLimiter, error)
 
-				this.handleRateLimiterRes(response, ipRateLimiter, rateLimiterRes)
-
-				response.status(429).json({ errors: { others: ['Rate limit exceeded'] }, data: {} })
-
-				return StopHere
+				return response
+					.status(429)
+					.json({ errors: { others: ['Rate limit exceeded'] }, data: {} })
 			}
 
 			Logger.error('Rate limiter error', error)
 
-			response.status(500).json({
-				errors: { others: ['Internal server error'] },
-				data: {},
-			})
-
-			return StopHere
+			return response.extensions.sendInternalServerError()
 		}
 
-		return
+		next()
 	}
 
 	private handleRateLimiterRes(
-		response: ExpressResponse,
+		response: CelosiaResponse,
 		rateLimiter: RateLimiterAbstract,
 		rateLimiterRes: RateLimiterRes,
 	) {
