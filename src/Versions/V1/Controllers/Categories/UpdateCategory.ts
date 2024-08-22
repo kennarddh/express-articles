@@ -18,6 +18,28 @@ class UpdateCategory extends BaseController {
 	) {
 		// TODO: Check if new parentID creating a circular hierarchy
 
+		const targetCategoryID = request.params.id
+
+		let currentParentID: number | null = request.body.parentID
+
+		while (currentParentID !== null) {
+			const currentCategory = await prisma.categories.findFirst({
+				where: { id: currentParentID },
+				select: { id: true, parentID: true },
+			})
+
+			currentParentID = currentCategory?.parentID ?? null
+
+			if (currentCategory?.id === targetCategoryID) {
+				return response.status(403).json({
+					errors: {
+						others: ['Circular parentID is not allowed'],
+					},
+					data: {},
+				})
+			}
+		}
+
 		try {
 			await prisma.categories.update({
 				where: {
@@ -41,7 +63,14 @@ class UpdateCategory extends BaseController {
 						},
 						data: {},
 					})
-				} else if (error.code === 'P2023' && error.meta?.field_name === 'parentID') {
+				} else if (error.code === 'P2002') {
+					return response.status(404).json({
+						errors: {
+							others: ['Name taken by another category'],
+						},
+						data: {},
+					})
+				} else if (error.code === 'P2003' && error.meta?.field_name === 'parentID') {
 					return response.status(403).json({
 						errors: {
 							others: ["Parent category doesn't exist"],

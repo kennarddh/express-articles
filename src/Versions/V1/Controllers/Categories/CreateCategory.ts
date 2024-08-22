@@ -39,9 +39,7 @@ class CreateCategory extends BaseController {
 				if (error.code === 'P2002') {
 					return response.status(403).json({
 						errors: {
-							others: [
-								`Cannot create category because there is another category with the same name.`,
-							],
+							others: ['Name taken by another category'],
 						},
 						data: {},
 					})
