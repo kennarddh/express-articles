@@ -15,11 +15,12 @@ class GetCategories extends BaseController {
 		try {
 			const categories = await prisma.categories.findMany({
 				where: {
-					parentID: request.query.parent,
+					parentID: request.query.parent ?? null,
 				},
 				select: {
 					name: true,
 					description: true,
+					parentID: true,
 				},
 			})
 
@@ -38,7 +39,7 @@ class GetCategories extends BaseController {
 
 	public override get query() {
 		return z.object({
-			parent: z.number().nullable(),
+			parent: z.number().nullish(),
 		})
 	}
 }

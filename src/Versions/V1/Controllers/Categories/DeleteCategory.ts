@@ -2,6 +2,8 @@ import { z } from 'zod'
 
 import { BaseController, CelosiaResponse, IControllerRequest } from '@celosiajs/core'
 
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
+
 import Logger from 'Utils/Logger/Logger'
 
 import { JWTVerifiedData } from 'Middlewares/VerifyJWT'
@@ -14,59 +16,11 @@ class DeleteCategory extends BaseController {
 		request: IControllerRequest<DeleteCategory>,
 		response: CelosiaResponse,
 	) {
-		try {
-			const isArticleWithThisCategoryExist = await prisma.articles.findFirst({
-				where: {
-					categoryID: request.params.id,
-				},
-				select: { id: true },
-			})
-
-			if (isArticleWithThisCategoryExist) {
-				return response.status(403).json({
-					errors: {
-						others: [
-							`Cannot delete category because there are still articles depends on this category.`,
-						],
-					},
-					data: {},
-				})
-			}
-		} catch (error) {
-			Logger.error('DeleteCategory controller failed to count articles with category', error)
-
-			return response.extensions.sendInternalServerError()
-		}
+		// TODO: Check if there are still articles that is linked when deleted
+		// TODO: Check if there are still categories that is parented to this when deleted
 
 		try {
-			const isCategoryWithThisCategoryAsParentExist = !!(await prisma.categories.findFirst({
-				where: {
-					parentID: request.params.id,
-				},
-				select: { id: true },
-			}))
-
-			if (isCategoryWithThisCategoryAsParentExist) {
-				return response.status(422).json({
-					errors: {
-						others: [
-							`Cannot delete category because there are still categories depends on this as parent.`,
-						],
-					},
-					data: {},
-				})
-			}
-		} catch (error) {
-			Logger.error(
-				'DeleteCategory controller failed to count categories with this as parent',
-				error,
-			)
-
-			return response.extensions.sendInternalServerError()
-		}
-
-		try {
-			await prisma.categories.deleteMany({
+			await prisma.categories.delete({
 				where: {
 					id: request.params.id,
 				},
@@ -74,6 +28,17 @@ class DeleteCategory extends BaseController {
 
 			return response.status(204).send()
 		} catch (error) {
+			if (error instanceof PrismaClientKnownRequestError) {
+				if (error.code === 'P2025') {
+					return response.status(404).json({
+						errors: {
+							others: [`Category not found.`],
+						},
+						data: {},
+					})
+				}
+			}
+
 			Logger.error('DeleteCategory controller failed to delete category', error)
 
 			return response.extensions.sendInternalServerError()

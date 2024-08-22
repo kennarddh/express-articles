@@ -2,6 +2,8 @@ import { z } from 'zod'
 
 import { BaseController, CelosiaResponse, IControllerRequest } from '@celosiajs/core'
 
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
+
 import Logger from 'Utils/Logger/Logger'
 
 import { JWTVerifiedData } from 'Middlewares/VerifyJWT'
@@ -14,27 +16,7 @@ class UpdateCategory extends BaseController {
 		request: IControllerRequest<UpdateCategory>,
 		response: CelosiaResponse,
 	) {
-		try {
-			const isCategoryExist = !!(await prisma.categories.findFirst({
-				where: {
-					id: request.params.id,
-				},
-				select: { id: true },
-			}))
-
-			if (!isCategoryExist) {
-				return response.status(404).json({
-					errors: {
-						others: [`Category not found.`],
-					},
-					data: {},
-				})
-			}
-		} catch (error) {
-			Logger.error('UpdateCategory controller failed to find category with id', error)
-
-			return response.extensions.sendInternalServerError()
-		}
+		// TODO: Check if new parentID creating a circular hierarchy
 
 		try {
 			await prisma.categories.update({
@@ -51,7 +33,24 @@ class UpdateCategory extends BaseController {
 
 			return response.status(204).send()
 		} catch (error) {
-			Logger.error('CreateCategory controller failed to update category', error)
+			if (error instanceof PrismaClientKnownRequestError) {
+				if (error.code === 'P2025') {
+					return response.status(404).json({
+						errors: {
+							others: ['Category not found'],
+						},
+						data: {},
+					})
+				} else if (error.code === 'P2023' && error.meta?.field_name === 'parentID') {
+					return response.status(403).json({
+						errors: {
+							others: ["Parent category doesn't exist"],
+						},
+						data: {},
+					})
+				}
+			}
+			Logger.error('UpdateCategory controller failed to update category', error)
 
 			return response.extensions.sendInternalServerError()
 		}
