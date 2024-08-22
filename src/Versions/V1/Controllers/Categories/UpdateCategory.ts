@@ -16,73 +16,83 @@ class UpdateCategory extends BaseController {
 		request: IControllerRequest<UpdateCategory>,
 		response: CelosiaResponse,
 	) {
-		// TODO: Check if new parentID creating a circular hierarchy
-
 		const targetCategoryID = request.params.id
 
-		let currentParentID: number | null = request.body.parentID
+		await prisma.$transaction(async tx => {
+			let currentParentID: number | null = request.body.parentID
 
-		while (currentParentID !== null) {
-			const currentCategory = await prisma.categories.findFirst({
-				where: { id: currentParentID },
-				select: { id: true, parentID: true },
-			})
-
-			currentParentID = currentCategory?.parentID ?? null
-
-			if (currentCategory?.id === targetCategoryID) {
-				return response.status(403).json({
-					errors: {
-						others: ['Circular parentID is not allowed'],
-					},
-					data: {},
-				})
-			}
-		}
-
-		try {
-			await prisma.categories.update({
-				where: {
-					id: request.params.id,
-				},
-				data: {
-					name: request.body.name,
-					description: request.body.description,
-					parentID: request.body.parentID,
-				},
-				select: { id: true },
-			})
-
-			return response.status(204).send()
-		} catch (error) {
-			if (error instanceof PrismaClientKnownRequestError) {
-				if (error.code === 'P2025') {
-					return response.status(404).json({
-						errors: {
-							others: ['Category not found'],
-						},
-						data: {},
+			while (currentParentID !== null) {
+				try {
+					const currentCategory = await tx.categories.findFirst({
+						where: { id: currentParentID },
+						select: { id: true, parentID: true },
 					})
-				} else if (error.code === 'P2002') {
-					return response.status(404).json({
-						errors: {
-							others: ['Name taken by another category'],
-						},
-						data: {},
-					})
-				} else if (error.code === 'P2003' && error.meta?.field_name === 'parentID') {
-					return response.status(403).json({
-						errors: {
-							others: ["Parent category doesn't exist"],
-						},
-						data: {},
-					})
+
+					currentParentID = currentCategory?.parentID ?? null
+
+					if (currentCategory?.id === targetCategoryID) {
+						return response.status(403).json({
+							errors: {
+								others: ['Circular parentID is not allowed'],
+							},
+							data: {},
+						})
+					}
+				} catch (error) {
+					Logger.error(
+						'UpdateCategory controller failed to check for circular parentID',
+						error,
+					)
+
+					return response.extensions.sendInternalServerError()
 				}
 			}
-			Logger.error('UpdateCategory controller failed to update category', error)
 
-			return response.extensions.sendInternalServerError()
-		}
+			try {
+				await tx.categories.update({
+					where: {
+						id: request.params.id,
+					},
+					data: {
+						name: request.body.name,
+						description: request.body.description,
+						parentID: request.body.parentID,
+					},
+					select: { id: true },
+				})
+
+				return response.status(204).send()
+			} catch (error) {
+				if (error instanceof PrismaClientKnownRequestError) {
+					if (error.code === 'P2025') {
+						return response.status(404).json({
+							errors: {
+								others: ['Category not found'],
+							},
+							data: {},
+						})
+					} else if (error.code === 'P2002') {
+						return response.status(404).json({
+							errors: {
+								others: ['Name taken by another category'],
+							},
+							data: {},
+						})
+					} else if (error.code === 'P2003' && error.meta?.field_name === 'parentID') {
+						return response.status(403).json({
+							errors: {
+								others: ["Parent category doesn't exist"],
+							},
+							data: {},
+						})
+					}
+				}
+
+				Logger.error('UpdateCategory controller failed to update category', error)
+
+				return response.extensions.sendInternalServerError()
+			}
+		})
 	}
 
 	public override get params() {
