@@ -48,7 +48,7 @@ class CreateCategory extends BaseController {
 				if (error.code === 'P2003') {
 					return response.status(403).json({
 						errors: {
-							others: [`Parent category doesn't exist.`],
+							others: [`Parent category doesn't exist`],
 						},
 						data: {},
 					})

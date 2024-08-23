@@ -43,7 +43,7 @@ class RequiredRole extends BaseMiddleware<CelosiaRequest, CelosiaResponse, JWTVe
 			if (user.role !== this.requiredRole)
 				return response.status(403).json({
 					errors: {
-						others: [`Only ${this.requiredRole} is allowed.`],
+						others: [`Only ${this.requiredRole} is allowed`],
 					},
 					data: {},
 				})
