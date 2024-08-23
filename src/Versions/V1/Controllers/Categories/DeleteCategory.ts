@@ -17,7 +17,6 @@ class DeleteCategory extends BaseController {
 		response: CelosiaResponse,
 	) {
 		// TODO: Check if there are still articles that is linked when deleted
-		// TODO: Check if there are still categories that is parented to this when deleted
 
 		try {
 			await prisma.categories.delete({
@@ -32,7 +31,14 @@ class DeleteCategory extends BaseController {
 				if (error.code === 'P2025') {
 					return response.status(404).json({
 						errors: {
-							others: [`Category not found.`],
+							others: ['Category not found'],
+						},
+						data: {},
+					})
+				} else if (error.code === 'P2003' && error.meta?.field_name === 'parentID') {
+					return response.status(404).json({
+						errors: {
+							others: ['Cannot delete a category that has descendants'],
 						},
 						data: {},
 					})

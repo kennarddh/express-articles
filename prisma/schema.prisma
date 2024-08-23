@@ -50,7 +50,7 @@ model Categories {
     name        String @unique @db.VarChar(100)
     description String @db.Text
 
-    parent      Categories?  @relation("Hierarchy", fields: [parentID], references: [id])
+    parent      Categories?  @relation("Hierarchy", fields: [parentID], references: [id], onDelete: Restrict)
     parentID    Int?
     descendants Categories[] @relation("Hierarchy")
 
