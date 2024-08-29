@@ -29,6 +29,8 @@
 
 ### GET /tags/:id
 
+### GET /tags/name/:name
+
 ## Categories
 
 ### POST /categories/

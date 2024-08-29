@@ -72,14 +72,14 @@ class UpdateCategory extends BaseController {
 							data: {},
 						})
 					} else if (error.code === 'P2002') {
-						return response.status(404).json({
+						return response.status(422).json({
 							errors: {
 								others: ['Name taken by another category'],
 							},
 							data: {},
 						})
 					} else if (error.code === 'P2003' && error.meta?.field_name === 'parentID') {
-						return response.status(403).json({
+						return response.status(404).json({
 							errors: {
 								others: ["Parent category doesn't exist"],
 							},

@@ -16,8 +16,6 @@ import {
 
 const CategoriesRouter = new CelosiaRouter({ strict: true })
 
-// TODO: Only admin can create category
-
 CategoriesRouter.useMiddlewares(new RateLimiter())
 
 CategoriesRouter.post('/', [new VerifyJWT(), new RequiredRole(Role.Admin)], new CreateCategory())

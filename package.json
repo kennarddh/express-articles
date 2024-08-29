@@ -28,9 +28,9 @@
 	"author": "kennarddh",
 	"license": "MIT",
 	"dependencies": {
-		"@celosiajs/core": "^0.0.1-alpha.8",
-		"@celosiajs/extensions": "^0.0.1-alpha.8",
-		"@celosiajs/file-upload": "^0.0.1-alpha.8",
+		"@celosiajs/core": "^0.0.1-alpha.9",
+		"@celosiajs/extensions": "^0.0.1-alpha.9",
+		"@celosiajs/file-upload": "^0.0.1-alpha.9",
 		"@celosiajs/logging": "^0.0.1-alpha.8",
 		"@prisma/client": "^5.14.0",
 		"argon2": "^0.40.3",

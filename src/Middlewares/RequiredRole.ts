@@ -32,7 +32,7 @@ class RequiredRole extends BaseMiddleware<CelosiaRequest, CelosiaResponse, JWTVe
 			if (user === null) {
 				Logger.warn('Cannot find user id in valid signed JWT')
 
-				return response.status(400).json({
+				return response.status(404).json({
 					errors: {
 						others: ['User not found'],
 					},
