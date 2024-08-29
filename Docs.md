@@ -19,7 +19,15 @@
 
 ## Tags
 
+### POST /tags/
+
+### PUT /tags/:id
+
+### DELETE /tags/:id
+
 ### GET /tags?search=
+
+### GET /tags/:id
 
 ## Categories
 
