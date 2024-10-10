@@ -26,7 +26,7 @@ model User {
 
     role Role @default(User)
 
-    articles Articles[] @relation("AuthorArticles")
+    articles Articles[] @relation("ArticlesAuthor")
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -38,7 +38,7 @@ model Tags {
     name        String @unique @db.VarChar(100)
     description String @db.Text
 
-    articles Articles[]
+    articles Articles[] @relation("ArticlesTags")
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -58,16 +58,19 @@ model Categories {
     parentID    Int?
     descendants Categories[] @relation("Hierarchy")
 
-    articles Articles[] @relation("CategoryArticles")
+    articles Articles[] @relation("ArticlesCategory")
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 }
 
-model Images {
+model ArticlesImages {
     id Int @id @default(autoincrement())
 
     fileName String @db.VarChar(256)
+
+    article   Articles @relation(fields: [articleID], references: [id])
+    articleID Int
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -79,14 +82,15 @@ model Articles {
     title       String @unique @db.VarChar(256)
     description String @db.Text
 
-    author     User?      @relation("AuthorArticles", fields: [authorID], references: [id])
+    author     User?      @relation("ArticlesAuthor", fields: [authorID], references: [id])
     authorID   Int?
-    tags       Tags[]
-    category   Categories @relation("CategoryArticles", fields: [categoryID], references: [id])
+    tags       Tags[]     @relation("ArticlesTags")
+    category   Categories @relation("ArticlesCategory", fields: [categoryID], references: [id])
     categoryID Int
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    createdAt      DateTime         @default(now())
+    updatedAt      DateTime         @updatedAt
+    ArticlesImages ArticlesImages[]
 
     @@fulltext([title])
     @@fulltext([description])
