@@ -52,7 +52,7 @@ class RequiredRole extends BaseMiddleware<CelosiaRequest, CelosiaResponse, JWTVe
 		} catch (error) {
 			Logger.error('RequiredRole middleware failed to find user', error)
 
-			return response.extensions.sendInternalServerError()
+			return response.sendInternalServerError()
 		}
 	}
 }

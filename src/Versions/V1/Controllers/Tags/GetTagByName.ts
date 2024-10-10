@@ -40,7 +40,7 @@ class GetTagByName extends BaseController {
 		} catch (error) {
 			Logger.error('GetTagByName controller failed to find tag', error)
 
-			return response.extensions.sendInternalServerError()
+			return response.sendInternalServerError()
 		}
 	}
 

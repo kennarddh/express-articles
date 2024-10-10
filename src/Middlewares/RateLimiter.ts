@@ -62,14 +62,14 @@ class RateLimiter extends BaseMiddleware {
 
 				Logger.error('User rate limiter error', error)
 
-				return response.extensions.sendInternalServerError()
+				return response.sendInternalServerError()
 			}
 		}
 
 		if (request.ip === undefined) {
 			Logger.warn('Rate limiter undefined ip')
 
-			return response.extensions.sendInternalServerError()
+			return response.sendInternalServerError()
 		}
 
 		try {
@@ -89,7 +89,7 @@ class RateLimiter extends BaseMiddleware {
 
 			Logger.error('Rate limiter error', error)
 
-			return response.extensions.sendInternalServerError()
+			return response.sendInternalServerError()
 		}
 	}
 

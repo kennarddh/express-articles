@@ -30,7 +30,7 @@ class Register extends BaseController {
 		} catch (error) {
 			Logger.error('Register controller username validation findFirst error', error)
 
-			return response.extensions.sendInternalServerError()
+			return response.sendInternalServerError()
 		}
 
 		const hashedPassword = await argon2.hash(password, {
@@ -55,7 +55,7 @@ class Register extends BaseController {
 		} catch (error) {
 			Logger.error('Register controller failed to create user', error, { username })
 
-			return response.extensions.sendInternalServerError()
+			return response.sendInternalServerError()
 		}
 	}
 

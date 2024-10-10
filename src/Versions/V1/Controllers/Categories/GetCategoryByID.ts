@@ -42,7 +42,7 @@ class GetCategoryByID extends BaseController {
 		} catch (error) {
 			Logger.error('GetCategoryByID controller failed to find category', error)
 
-			return response.extensions.sendInternalServerError()
+			return response.sendInternalServerError()
 		}
 	}
 

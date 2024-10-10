@@ -47,7 +47,7 @@ class DeleteCategory extends BaseController {
 
 			Logger.error('DeleteCategory controller failed to delete category', error)
 
-			return response.extensions.sendInternalServerError()
+			return response.sendInternalServerError()
 		}
 	}
 

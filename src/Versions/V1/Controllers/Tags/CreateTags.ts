@@ -45,7 +45,7 @@ class CreateTags extends BaseController {
 
 			Logger.error('CreateTags controller failed to create tags', error)
 
-			return response.extensions.sendInternalServerError()
+			return response.sendInternalServerError()
 		}
 	}
 

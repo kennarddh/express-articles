@@ -57,7 +57,7 @@ class CreateCategory extends BaseController {
 
 			Logger.error('CreateCategory controller failed to create category', error)
 
-			return response.extensions.sendInternalServerError()
+			return response.sendInternalServerError()
 		}
 	}
 

@@ -50,7 +50,7 @@ class UpdateTag extends BaseController {
 
 			Logger.error('UpdateTag controller failed to update tag', error)
 
-			return response.extensions.sendInternalServerError()
+			return response.sendInternalServerError()
 		}
 	}
 

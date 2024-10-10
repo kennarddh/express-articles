@@ -33,7 +33,7 @@ class GetCategories extends BaseController {
 		} catch (error) {
 			Logger.error('GetCategories controller failed to find categories', error)
 
-			return response.extensions.sendInternalServerError()
+			return response.sendInternalServerError()
 		}
 	}
 

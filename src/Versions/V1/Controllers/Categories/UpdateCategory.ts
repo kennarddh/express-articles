@@ -44,7 +44,7 @@ class UpdateCategory extends BaseController {
 						error,
 					)
 
-					return response.extensions.sendInternalServerError()
+					return response.sendInternalServerError()
 				}
 			}
 
@@ -90,7 +90,7 @@ class UpdateCategory extends BaseController {
 
 				Logger.error('UpdateCategory controller failed to update category', error)
 
-				return response.extensions.sendInternalServerError()
+				return response.sendInternalServerError()
 			}
 		})
 	}

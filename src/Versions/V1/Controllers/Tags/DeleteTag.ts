@@ -40,7 +40,7 @@ class DeleteTag extends BaseController {
 
 			Logger.error('DeleteTag controller failed to delete tag', error)
 
-			return response.extensions.sendInternalServerError()
+			return response.sendInternalServerError()
 		}
 	}
 

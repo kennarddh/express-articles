@@ -41,7 +41,7 @@ class GetTags extends BaseController {
 		} catch (error) {
 			Logger.error('GetTags controller failed to find tags', error)
 
-			return response.extensions.sendInternalServerError()
+			return response.sendInternalServerError()
 		}
 	}
 

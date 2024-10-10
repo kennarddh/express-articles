@@ -84,7 +84,7 @@ class VerifyJWT extends BaseMiddleware<
 
 			Logger.error('Unknown error while verifying JWT', error, { token })
 
-			return response.extensions.sendInternalServerError()
+			return response.sendInternalServerError()
 		}
 	}
 }

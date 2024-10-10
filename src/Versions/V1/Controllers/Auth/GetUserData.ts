@@ -28,7 +28,7 @@ class GetUserData extends BaseController {
 			if (!user) {
 				Logger.error("Can't find user in GetUserData controller", { id })
 
-				return response.extensions.sendInternalServerError()
+				return response.sendInternalServerError()
 			}
 
 			return response.status(200).json({
@@ -43,7 +43,7 @@ class GetUserData extends BaseController {
 		} catch (error) {
 			Logger.error('GetUserData controller failed to get user', error, { id })
 
-			return response.extensions.sendInternalServerError()
+			return response.sendInternalServerError()
 		}
 	}
 }
