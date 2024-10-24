@@ -25,7 +25,7 @@ class LogHttpRequest extends BaseMiddleware {
 	) {
 		const requestStart = Date.now()
 
-		response.on('finish', () => {
+		response.expressResponse.on('finish', () => {
 			const {
 				headers,
 				httpVersion,

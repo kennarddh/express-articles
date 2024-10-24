@@ -76,23 +76,35 @@ model ArticlesImages {
     updatedAt DateTime @updatedAt
 }
 
+enum ArticleStatus {
+    Draft
+    Private
+    Public
+}
+
 model Articles {
     id Int @id @default(autoincrement())
 
-    title       String @unique @db.VarChar(256)
-    description String @db.Text
+    title   String @db.VarChar(256)
+    content String @map("description") @db.Text
 
-    author     User?      @relation("ArticlesAuthor", fields: [authorID], references: [id])
-    authorID   Int?
+    author     User       @relation("ArticlesAuthor", fields: [authorID], references: [id])
+    authorID   Int
     tags       Tags[]     @relation("ArticlesTags")
     category   Categories @relation("ArticlesCategory", fields: [categoryID], references: [id])
     categoryID Int
 
-    createdAt      DateTime         @default(now())
-    updatedAt      DateTime         @updatedAt
-    ArticlesImages ArticlesImages[]
+    status ArticleStatus
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    ArticlesImages         ArticlesImages[]
+    thumbnailImageFileName String?          @db.VarChar(256)
+
+    version Int @default(0)
 
     @@fulltext([title])
-    @@fulltext([description])
-    @@fulltext([title, description])
+    @@fulltext([content])
+    @@fulltext([title, content])
 }

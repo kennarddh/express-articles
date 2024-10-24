@@ -42,5 +42,6 @@
 		"verbose": false
 	},
 	"references": [{ "path": "./tsconfig.eslint.json" }],
-	"include": ["src"]
+	"include": ["src"],
+	"exclude": ["node_modules"]
 }

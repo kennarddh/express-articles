@@ -17,6 +17,7 @@ class GetTags extends BaseController {
 				request.query.search === undefined
 					? await prisma.tags.findMany({
 							select: {
+								id: true,
 								name: true,
 								description: true,
 							},
@@ -27,6 +28,7 @@ class GetTags extends BaseController {
 								description: { search: request.query.search },
 							},
 							select: {
+								id: true,
 								name: true,
 								description: true,
 							},

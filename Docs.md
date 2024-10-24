@@ -11,6 +11,8 @@
 
 ### PUT /articles/:id
 
+### PATCH /articles/:id
+
 ### DELETE /articles/:id
 
 ### GET /articles/:id

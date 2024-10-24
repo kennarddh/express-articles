@@ -5,7 +5,6 @@ import {
 	EmptyObject,
 	INextFunction,
 } from '@celosiajs/core'
-import '@celosiajs/extensions'
 
 import { RateLimiterAbstract, RateLimiterMemory, RateLimiterRes } from 'rate-limiter-flexible'
 
