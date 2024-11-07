@@ -11,6 +11,7 @@ import {
 	CreateArticle,
 	DeleteArticle,
 	GetArticleByID,
+	GetArticleImage,
 	GetArticles,
 	UpdateArticle,
 } from 'Versions/V1/Controllers/Articles'
@@ -33,6 +34,7 @@ ArticlesRouter.put(
 )
 ArticlesRouter.delete('/:id', [new VerifyJWT(), new RequiredRole(Role.Admin)], new DeleteArticle())
 ArticlesRouter.get('/:id', [], new GetArticleByID())
+ArticlesRouter.get('/image/:id', [], new GetArticleImage())
 ArticlesRouter.get('/', [], new GetArticles())
 
 export default ArticlesRouter

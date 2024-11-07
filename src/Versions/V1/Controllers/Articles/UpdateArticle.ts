@@ -27,7 +27,7 @@ class UpdateArticle extends BaseController {
 		try {
 			const article = await prisma.articles.findFirst({
 				where: { id: request.params.id },
-				select: { id: true, version: true, thumbnailImageFileName: true },
+				select: { id: true, version: true, thumbnailImage: true },
 			})
 
 			if (article === null) {
@@ -67,16 +67,20 @@ class UpdateArticle extends BaseController {
 						tags: {
 							connect: tagsID,
 						},
-						thumbnailImageFileName,
+						thumbnailImage: {
+							update: {
+								fileName: thumbnailImageFileName,
+							},
+						},
 						version: { increment: 1 },
 					},
 				})
 
-				if (article.thumbnailImageFileName) {
+				if (article.thumbnailImage) {
 					try {
 						await MinioClient.removeObject(
 							MinioBucket.ArticlesImages,
-							article.thumbnailImageFileName,
+							article.thumbnailImage.fileName,
 						)
 					} catch (error) {
 						Logger.error(

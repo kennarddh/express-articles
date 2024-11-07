@@ -58,7 +58,7 @@ class CreateArticle extends BaseController {
 					tags: {
 						connect: tagsID,
 					},
-					thumbnailImageFileName,
+					thumbnailImage: { create: { fileName: thumbnailImageFileName } },
 				},
 				select: {
 					id: true,

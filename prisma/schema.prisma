@@ -65,12 +65,14 @@ model Categories {
 }
 
 model ArticlesImages {
-    id Int @id @default(autoincrement())
-
+    id       Int    @id @default(autoincrement())
     fileName String @db.VarChar(256)
 
-    article   Articles @relation(fields: [articleID], references: [id])
-    articleID Int
+    article   Articles? @relation("ArticleImages", fields: [articleID], references: [id])
+    articleID Int?
+
+    articleThumbnail  Articles? @relation("ArticleThumbnail", fields: [articleThumnailID], references: [id])
+    articleThumnailID Int?      @unique
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -99,8 +101,8 @@ model Articles {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    ArticlesImages         ArticlesImages[]
-    thumbnailImageFileName String?          @db.VarChar(256)
+    ArticlesImages ArticlesImages[] @relation("ArticleImages")
+    thumbnailImage ArticlesImages?  @relation("ArticleThumbnail")
 
     version Int @default(0)
 

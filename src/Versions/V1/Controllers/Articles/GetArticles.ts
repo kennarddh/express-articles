@@ -18,7 +18,7 @@ class GetArticles extends BaseController {
 					id: true,
 					title: true,
 					content: true,
-					thumbnailImageFileName: true,
+					thumbnailImage: true,
 					author: {
 						select: {
 							id: true,
@@ -75,8 +75,8 @@ class GetArticles extends BaseController {
 						},
 						tags: article.tags,
 						category: article.category,
-						thumbnailImage: article.thumbnailImageFileName
-							? `${request.protocol}://${request.header('host') ?? 'unknown'}/articles/image/${article.thumbnailImageFileName}`
+						thumbnailImage: article.thumbnailImage
+							? `${request.protocol}://${request.header('host') ?? 'unknown'}/v1/articles/image/${article.thumbnailImage.id}`
 							: null,
 						createdAt: article.createdAt.getTime(),
 						updatedAt: article.updatedAt.getTime(),
