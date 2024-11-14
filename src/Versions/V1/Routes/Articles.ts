@@ -13,6 +13,7 @@ import {
 	GetArticleByID,
 	GetArticleImage,
 	GetArticles,
+	PatchArticle,
 	UpdateArticle,
 } from 'Versions/V1/Controllers/Articles'
 
@@ -31,6 +32,12 @@ ArticlesRouter.put(
 	[new FileUpload({ limits: { fileSize: 2 * 1024 * 1024 } })], // 2MB
 	[new VerifyJWT(), new RequiredRole(Role.Admin)],
 	new UpdateArticle(),
+)
+ArticlesRouter.patch(
+	'/:id',
+	[new FileUpload({ limits: { fileSize: 2 * 1024 * 1024 } })], // 2MB
+	[new VerifyJWT(), new RequiredRole(Role.Admin)],
+	new PatchArticle(),
 )
 ArticlesRouter.delete('/:id', [new VerifyJWT(), new RequiredRole(Role.Admin)], new DeleteArticle())
 ArticlesRouter.get('/:id', [], new GetArticleByID())
