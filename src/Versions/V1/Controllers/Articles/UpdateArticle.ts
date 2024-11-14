@@ -33,7 +33,7 @@ class UpdateArticle extends BaseController {
 			if (article === null) {
 				return response.status(404).json({
 					errors: {
-						others: ['Article not found.'],
+						others: ['Article not found'],
 					},
 					data: {},
 				})
@@ -114,7 +114,7 @@ class UpdateArticle extends BaseController {
 					if (error.code === 'P2016') {
 						return response.status(409).json({
 							errors: {
-								others: ['Article have been modified.'],
+								others: ['Article have been modified'],
 							},
 							data: {},
 						})
@@ -123,7 +123,7 @@ class UpdateArticle extends BaseController {
 					if (error.code === 'P2003' && error.meta?.field_name === 'categoryID') {
 						return response.status(403).json({
 							errors: {
-								others: ['Category not found.'],
+								others: ['Category not found'],
 							},
 							data: {},
 						})

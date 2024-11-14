@@ -77,7 +77,7 @@ class CreateArticle extends BaseController {
 				if (error.code === 'P2003' && error.meta?.field_name === 'categoryID') {
 					return response.status(403).json({
 						errors: {
-							others: ['Category not found.'],
+							others: ['Category not found'],
 						},
 						data: {},
 					})

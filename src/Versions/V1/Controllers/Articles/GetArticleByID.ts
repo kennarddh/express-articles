@@ -56,7 +56,7 @@ class GetArticleByID extends BaseController {
 
 			if (article === null) {
 				return response.status(404).json({
-					errors: { others: ['Article not found.'] },
+					errors: { others: ['Article not found'] },
 					data: {},
 				})
 			}

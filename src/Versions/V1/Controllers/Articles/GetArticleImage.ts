@@ -25,7 +25,7 @@ class GetArticleImage extends BaseController {
 
 			if (articleImage === null) {
 				return response.status(404).json({
-					errors: { others: ['Article image not found.'] },
+					errors: { others: ['Article image not found'] },
 					data: {},
 				})
 			}
