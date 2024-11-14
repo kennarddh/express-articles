@@ -12,7 +12,8 @@ class GetUserData extends BaseController {
 		_: IControllerRequest<GetUserData>,
 		response: CelosiaResponse,
 	) {
-		const id = data.user.id
+		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+		const id = data.user!.id
 
 		try {
 			const user = await prisma.user.findFirst({

@@ -50,7 +50,8 @@ class CreateArticle extends BaseController {
 		try {
 			const article = await prisma.articles.create({
 				data: {
-					authorID: input.user.id,
+					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+					authorID: input.user!.id,
 					title: request.body.title,
 					content: request.body.content,
 					status: request.body.status,

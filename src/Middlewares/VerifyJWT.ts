@@ -14,7 +14,7 @@ import Logger from 'Utils/Logger/Logger'
 import JWTVerify from 'Utils/Promises/JWTVerify'
 
 export interface JWTVerifiedData {
-	user: {
+	user?: {
 		id: number
 	}
 }
@@ -25,6 +25,10 @@ class VerifyJWT extends BaseMiddleware<
 	EmptyObject,
 	JWTVerifiedData
 > {
+	constructor(public optional = false) {
+		super()
+	}
+
 	public override async index(
 		_: EmptyObject,
 		request: CelosiaRequest,
@@ -33,13 +37,16 @@ class VerifyJWT extends BaseMiddleware<
 	) {
 		const tokenHeader = request.header('Access-Token')
 
-		if (!tokenHeader)
+		if (!tokenHeader) {
+			if (this.optional) return next()
+
 			return response.status(401).json({
 				errors: {
 					others: ['No token provided'],
 				},
 				data: {},
 			})
+		}
 
 		if (Array.isArray(tokenHeader))
 			return response.status(401).json({

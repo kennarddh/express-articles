@@ -1,14 +1,18 @@
 import { z } from 'zod'
 
-import { BaseController, CelosiaResponse, EmptyObject, IControllerRequest } from '@celosiajs/core'
+import { BaseController, CelosiaResponse, IControllerRequest } from '@celosiajs/core'
+
+import { $Enums } from '@prisma/client'
 
 import Logger from 'Utils/Logger/Logger'
+
+import { JWTVerifiedPopulatedData } from 'Middlewares/PopulateJWTUser'
 
 import prisma from 'Database/index'
 
 class GetArticleByID extends BaseController {
 	public async index(
-		_: EmptyObject,
+		data: JWTVerifiedPopulatedData,
 		request: IControllerRequest<GetArticleByID>,
 		response: CelosiaResponse,
 	) {
@@ -16,6 +20,11 @@ class GetArticleByID extends BaseController {
 			const article = await prisma.articles.findFirst({
 				where: {
 					id: request.params.id,
+					...(data.user?.data.role !== $Enums.Role.Admin
+						? {
+								status: $Enums.ArticleStatus.Public,
+							}
+						: {}),
 				},
 				select: {
 					title: true,
@@ -41,7 +50,7 @@ class GetArticleByID extends BaseController {
 							name: true,
 						},
 					},
-					status: true,
+					status: data.user?.data.role === $Enums.Role.Admin,
 				},
 			})
 
@@ -63,7 +72,12 @@ class GetArticleByID extends BaseController {
 					category: article.category,
 					createdAt: article.createdAt.getTime(),
 					updatedAt: article.updatedAt.getTime(),
-					status: article.status,
+					// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+					...(article.status
+						? {
+								status: article.status,
+							}
+						: {}),
 					title: article.title,
 					content: article.content,
 					thumbnailImage: article.thumbnailImage

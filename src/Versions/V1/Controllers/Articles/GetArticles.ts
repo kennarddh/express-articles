@@ -1,14 +1,18 @@
 import { z } from 'zod'
 
-import { BaseController, CelosiaResponse, EmptyObject, IControllerRequest } from '@celosiajs/core'
+import { BaseController, CelosiaResponse, IControllerRequest } from '@celosiajs/core'
+
+import { $Enums } from '@prisma/client'
 
 import Logger from 'Utils/Logger/Logger'
+
+import { JWTVerifiedPopulatedData } from 'Middlewares/PopulateJWTUser'
 
 import prisma from 'Database/index'
 
 class GetArticles extends BaseController {
 	public async index(
-		_: EmptyObject,
+		data: JWTVerifiedPopulatedData,
 		request: IControllerRequest<GetArticles>,
 		response: CelosiaResponse,
 	) {
@@ -39,7 +43,7 @@ class GetArticles extends BaseController {
 							name: true,
 						},
 					},
-					status: true,
+					status: data.user?.data.role === $Enums.Role.Admin,
 				},
 				orderBy: {
 					[request.query.sortBy]: request.query.sort,
@@ -56,6 +60,11 @@ class GetArticles extends BaseController {
 						? { tags: { every: { id: { in: request.query.tags } } } }
 						: {}),
 					...(request.query.category ? { categoryID: request.query.category } : {}),
+					...(data.user?.data.role !== $Enums.Role.Admin
+						? {
+								status: $Enums.ArticleStatus.Public,
+							}
+						: {}),
 				},
 				skip: request.query.offset,
 				take: request.query.limit,
@@ -68,7 +77,12 @@ class GetArticles extends BaseController {
 						id: article.id,
 						title: article.title,
 						content: article.content,
-						status: article.status,
+						// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+						...(article.status
+							? {
+									status: article.status,
+								}
+							: {}),
 						author: {
 							id: article.author.id,
 							name: article.author.name,

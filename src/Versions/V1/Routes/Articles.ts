@@ -3,6 +3,7 @@ import { FileUpload } from '@celosiajs/file-upload'
 
 import { Role } from '@prisma/client'
 
+import PopulateJWTUser from 'Middlewares/PopulateJWTUser'
 import RateLimiter from 'Middlewares/RateLimiter'
 import RequiredRole from 'Middlewares/RequiredRole'
 import VerifyJWT from 'Middlewares/VerifyJWT'
@@ -40,8 +41,8 @@ ArticlesRouter.patch(
 	new PatchArticle(),
 )
 ArticlesRouter.delete('/:id', [new VerifyJWT(), new RequiredRole(Role.Admin)], new DeleteArticle())
-ArticlesRouter.get('/:id', [], new GetArticleByID())
+ArticlesRouter.get('/:id', [new VerifyJWT(true), new PopulateJWTUser()], new GetArticleByID())
 ArticlesRouter.get('/image/:id', [], new GetArticleImage())
-ArticlesRouter.get('/', [], new GetArticles())
+ArticlesRouter.get('/', [new VerifyJWT(true), new PopulateJWTUser()], new GetArticles())
 
 export default ArticlesRouter

@@ -22,7 +22,8 @@ class RequiredRole extends BaseMiddleware<CelosiaRequest, CelosiaResponse, JWTVe
 		try {
 			const user = await prisma.user.findFirst({
 				where: {
-					id: data.user.id,
+					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+					id: data.user!.id,
 				},
 				select: {
 					role: true,
