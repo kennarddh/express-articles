@@ -110,22 +110,11 @@ export default tsEslint.config(
 		},
 	},
 	{
-		files: ['scripts/**/*'],
+		files: ['jest.config.ts'],
 		languageOptions: {
 			parserOptions: {
-				project: 'tsconfig.dev.json',
+				project: 'tsconfig.node.json',
 			},
 		},
-		// plugins: {
-		// 	import: importPlugin,
-		// },
-		// rules: {
-		// 	'import/no-extraneous-dependencies': [
-		// 		'error',
-		// 		{
-		// 			devDependencies: true,
-		// 		},
-		// 	],
-		// },
 	},
 )
