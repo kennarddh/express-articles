@@ -110,10 +110,10 @@ export default tsEslint.config(
 		},
 	},
 	{
-		files: ['jest.config.ts'],
+		files: ['**/*.{test,spec}.?(c|m)[jt]s?(x)', './vitest.config.ts'],
 		languageOptions: {
 			parserOptions: {
-				project: 'tsconfig.node.json',
+				project: 'tsconfig.test.json',
 			},
 		},
 	},

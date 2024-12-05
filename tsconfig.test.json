@@ -7,7 +7,6 @@
 		"outDir": "./",
 		"declarationDir": "./"
 	},
-	"include": [ "./jest.config.ts", "tsconfig.json"],
-	"files": [ "./jest.config.ts", "tsconfig.json"],
+	"include": ["./vitest.config.ts", "**/*.{test,spec}.?(c|m)[jt]s?(x)"],
 	"exclude": ["src"]
 }
