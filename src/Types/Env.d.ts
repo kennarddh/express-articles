@@ -13,6 +13,7 @@ declare global {
 			MINIO_PORT: string
 			MINIO_ACCESS_KEY: string
 			MINIO_SECRET_KEY: string
+			PASSWORD_HASH_SECRET: string
 		}
 	}
 }

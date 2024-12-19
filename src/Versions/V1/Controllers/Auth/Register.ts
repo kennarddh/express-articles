@@ -1,14 +1,15 @@
-import argon2 from 'argon2'
-
 import { z } from 'zod'
 
 import { BaseController, CelosiaResponse, EmptyObject, IControllerRequest } from '@celosiajs/core'
 
-import Logger from 'Utils/Logger/Logger'
-
-import prisma from 'Database/index'
+import UserExistsError from 'Services/UserService/Errors/UserExistsError'
+import UserService from 'Services/UserService/UserService'
 
 class Register extends BaseController {
+	constructor(private userService = new UserService()) {
+		super()
+	}
+
 	public async index(
 		_: EmptyObject,
 		request: IControllerRequest<Register>,
@@ -17,34 +18,7 @@ class Register extends BaseController {
 		const { username, name, password } = request.body
 
 		try {
-			const user = await prisma.user.findFirst({
-				where: { username },
-				select: { id: true },
-			})
-
-			if (user != null)
-				return response.status(422).json({
-					errors: { others: ['Username is already taken'] },
-					data: {},
-				})
-		} catch (error) {
-			Logger.error('Register controller username validation findFirst error', error)
-
-			return response.sendInternalServerError()
-		}
-
-		const hashedPassword = await argon2.hash(password, {
-			hashLength: 64,
-		})
-
-		try {
-			const user = await prisma.user.create({
-				data: {
-					username,
-					name,
-					password: hashedPassword,
-				},
-			})
+			const user = await this.userService.register(username, name, password)
 
 			return response.status(201).json({
 				errors: {},
@@ -53,7 +27,12 @@ class Register extends BaseController {
 				},
 			})
 		} catch (error) {
-			Logger.error('Register controller failed to create user', error, { username })
+			if (error instanceof UserExistsError) {
+				return response.status(422).json({
+					errors: { others: ['Username is already taken'] },
+					data: {},
+				})
+			}
 
 			return response.sendInternalServerError()
 		}

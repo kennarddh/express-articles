@@ -1,5 +1,3 @@
-import jwt from 'jsonwebtoken'
-
 import {
 	BaseMiddleware,
 	CelosiaRequest,
@@ -8,10 +6,9 @@ import {
 	INextFunction,
 } from '@celosiajs/core'
 
-import { ITokenJWTPayload } from 'Types/Types'
-
-import Logger from 'Utils/Logger/Logger'
-import JWTVerify from 'Utils/Promises/JWTVerify'
+import AccessTokenService from 'Services/Token/AccessTokenService'
+import TokenExpiredError from 'Services/Token/Errors/TokenExpiredError'
+import TokenVerifyError from 'Services/Token/Errors/TokenVerifyError'
 
 export interface JWTVerifiedData {
 	user?: {
@@ -25,7 +22,10 @@ class VerifyJWT extends BaseMiddleware<
 	EmptyObject,
 	JWTVerifiedData
 > {
-	constructor(public optional = false) {
+	constructor(
+		public optional = false,
+		private accessTokenService = new AccessTokenService(),
+	) {
 		super()
 	}
 
@@ -35,61 +35,57 @@ class VerifyJWT extends BaseMiddleware<
 		response: CelosiaResponse,
 		next: INextFunction<JWTVerifiedData>,
 	) {
-		const tokenHeader = request.header('Access-Token')
+		const accessTokenHeader = request.header('Access-Token')
 
-		if (!tokenHeader) {
+		if (!accessTokenHeader) {
 			if (this.optional) return next()
 
 			return response.status(401).json({
 				errors: {
-					others: ['No token provided'],
+					others: ['No access token provided'],
 				},
 				data: {},
 			})
 		}
 
-		if (Array.isArray(tokenHeader))
+		if (Array.isArray(accessTokenHeader))
 			return response.status(401).json({
 				errors: {
-					others: ['Token must not be an arrray'],
+					others: ['Access token must not be an array'],
 				},
 				data: {},
 			})
 
-		const token = tokenHeader.split(' ')[1]
+		const accessToken = accessTokenHeader.split(' ')[1]
 
-		if (!token)
+		if (!accessToken)
 			return response.status(401).json({
 				errors: {
-					others: ['Invalid token'],
+					others: ['Invalid access token'],
 				},
 				data: {},
 			})
 
 		try {
-			const user = await JWTVerify<ITokenJWTPayload>(token, process.env.JWT_SECRET)
+			const payload = await this.accessTokenService.verify(accessToken)
 
 			next({
 				user: {
-					id: user.id,
+					id: payload.id,
 				},
 			})
 		} catch (error) {
-			if (error instanceof jwt.TokenExpiredError)
+			if (error instanceof TokenExpiredError) {
 				return response.status(401).json({
-					errors: {
-						others: ['Expired token'],
-					},
+					errors: { others: ['Access token expired'] },
 					data: {},
 				})
-
-			if (error instanceof jwt.JsonWebTokenError && error.message === 'invalid signature')
+			} else if (error instanceof TokenVerifyError) {
 				return response.status(401).json({
-					errors: { others: ['Invalid token'] },
+					errors: { others: ['Invalid access token'] },
 					data: {},
 				})
-
-			Logger.error('Unknown error while verifying JWT', error, { token })
+			}
 
 			return response.sendInternalServerError()
 		}

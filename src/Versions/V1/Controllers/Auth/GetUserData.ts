@@ -1,12 +1,16 @@
 import { BaseController, CelosiaResponse, IControllerRequest } from '@celosiajs/core'
 
+import UserService from 'Services/UserService/UserService'
+
 import Logger from 'Utils/Logger/Logger'
 
 import { JWTVerifiedData } from 'Middlewares/VerifyJWT'
 
-import prisma from 'Database/index'
-
 class GetUserData extends BaseController {
+	constructor(private userService = new UserService()) {
+		super()
+	}
+
 	public async index(
 		data: JWTVerifiedData,
 		_: IControllerRequest<GetUserData>,
@@ -16,17 +20,9 @@ class GetUserData extends BaseController {
 		const id = data.user!.id
 
 		try {
-			const user = await prisma.user.findFirst({
-				where: { id },
-				select: {
-					id: true,
-					username: true,
-					name: true,
-					role: true,
-				},
-			})
+			const userData = await this.userService.getUserData(id)
 
-			if (!user) {
+			if (!userData) {
 				Logger.error("Can't find user in GetUserData controller", { id })
 
 				return response.sendInternalServerError()
@@ -35,10 +31,10 @@ class GetUserData extends BaseController {
 			return response.status(200).json({
 				errors: {},
 				data: {
-					id: user.id,
-					username: user.username,
-					name: user.name,
-					role: user.role,
+					id: userData.id,
+					username: userData.username,
+					name: userData.name,
+					role: userData.role,
 				},
 			})
 		} catch (error) {

@@ -11,8 +11,8 @@ import TokenVerifyError from './Errors/TokenVerifyError'
 
 class TokenService<T extends JSONObject> extends Service {
 	constructor(
-		public secret: jwt.Secret,
-		public option: jwt.SignOptions,
+		private secret: jwt.Secret,
+		private option: jwt.SignOptions,
 	) {
 		super()
 	}
