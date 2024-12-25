@@ -36,7 +36,7 @@ class LogHttpRequest extends BaseMiddleware {
 
 			const { statusCode, statusMessage } = response
 
-			Logger.http({
+			Logger.http('Incoming request', {
 				processingTime: Date.now() - requestStart,
 				headers: FilterHeaders(headers),
 				httpVersion,

@@ -7,6 +7,6 @@
 		"outDir": "./",
 		"declarationDir": "./"
 	},
-	"include": ["./vitest.config.ts", "**/*.{test,spec}.?(c|m)[jt]s?(x)"],
-	"exclude": ["src"]
+	"include": ["**/__tests__/**/*.ts", "./vitest.config.ts"],
+	"exclude": ["node_modules"]
 }

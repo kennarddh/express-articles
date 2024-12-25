@@ -13,6 +13,13 @@ import tsEslint from 'typescript-eslint'
 // Also eslint-import-resolver-typescript
 
 export default tsEslint.config(
+	{
+		languageOptions: {
+			parserOptions: {
+				projectService: true,
+			},
+		},
+	},
 	{ ignores: ['build/**/*', 'eslint.config.d.ts', 'eslint.config.js'] },
 	{
 		languageOptions: {
@@ -110,7 +117,7 @@ export default tsEslint.config(
 		},
 	},
 	{
-		files: ['**/*.{test,spec}.?(c|m)[jt]s?(x)', './vitest.config.ts'],
+		files: ['**/*.test.ts', './vitest.config.ts'],
 		languageOptions: {
 			parserOptions: {
 				project: 'tsconfig.test.json',
