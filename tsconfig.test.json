@@ -3,10 +3,7 @@
 	"compilerOptions": {
 		"composite": true,
 		"sourceMap": false,
-		"types": ["node"],
-		"outDir": "./",
-		"declarationDir": "./"
+		"types": ["node"]
 	},
-	"include": ["**/__tests__/**/*.ts", "./vitest.config.ts"],
-	"exclude": ["node_modules"]
+	"include": ["src", "./vitest.config.ts"],
 }

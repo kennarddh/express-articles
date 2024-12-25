@@ -40,11 +40,10 @@
 			"Versions/*": ["./Versions/*"]
 		}
 	},
-	"tsc-alias": {
-		"resolveFullPaths": true,
-		"verbose": false
-	},
-	"references": [{ "path": "./tsconfig.eslint.json" }, { "path": "./tsconfig.test.json" }],
+	"references": [
+		{ "path": "./tsconfig.eslint.json" },
+		{ "path": "./tsconfig.test.json" },
+		{ "path": "./tsconfig.app.json" }
+	],
 	"include": ["src"],
-	"exclude": ["node_modules", "**/__tests__/**/*.ts"]
 }
