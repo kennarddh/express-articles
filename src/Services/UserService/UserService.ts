@@ -17,8 +17,8 @@ class UserService extends Service {
 		super()
 	}
 
-	getUserData(id: number) {
-		return this.userRepository.getByID(id)
+	async getUserData(id: number) {
+		return await this.userRepository.getByID(id)
 	}
 
 	async createTokens(userID: number) {

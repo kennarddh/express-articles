@@ -9,6 +9,7 @@
 	"printWidth": 100,
 
 	"importOrder": [
+		"^vitest",
 		"^express$",
 		"^http$",
 		"^path$",

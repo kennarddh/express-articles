@@ -4,5 +4,5 @@
 		"composite": true
 	},
 	"include": ["src"],
-	"exclude": ["**/__tests__/**/*.ts"]
+	"exclude": ["**/*.test.ts"]
 }

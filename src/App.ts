@@ -4,12 +4,14 @@ import helmet from 'helmet'
 
 import { CelosiaInstance, ConvertExpressMiddleware } from '@celosiajs/core'
 
+import DatabaseRepository from 'Repositories/DatabaseRepository'
+
 import Cors from 'Middlewares/Cors'
 import LogHttpRequest from 'Middlewares/LogHttpRequest'
 
 import Router from 'Routes'
 
-import 'Database/index'
+await DatabaseRepository.connect()
 
 const Instance = new CelosiaInstance({ strict: true })
 

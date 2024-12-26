@@ -123,5 +123,11 @@ export default tsEslint.config(
 				project: 'tsconfig.test.json',
 			},
 		},
+		plugins: {
+			'@typescript-eslint': tsEslint.plugin,
+		},
+		rules: {
+			'@typescript-eslint/unbound-method': 'off',
+		},
 	},
 )

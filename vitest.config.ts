@@ -1,10 +1,11 @@
-import tsconfigPaths from 'vite-tsconfig-paths'
 import { defineConfig } from 'vitest/config'
+
+import tsconfigPaths from 'vite-tsconfig-paths'
 
 export default defineConfig({
 	plugins: [tsconfigPaths()],
 	test: {
-		include: ['**/*.{test,spec}.?(c|m)[jt]s?(x)'],
+		include: ['**/*.test.ts'],
 		typecheck: {
 			enabled: true,
 		},
