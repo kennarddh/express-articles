@@ -1,7 +1,7 @@
-import { Mocked, beforeEach, describe, expect, it, vi } from 'vitest'
+import { Mocked, afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import UserRepository, { IUser, UserRole } from 'Repositories/UserRepository'
-import PasswordHashService from 'Services/PasswordHashService'
+import PasswordHashService from 'Services/PasswordHashService/PasswordHashService'
 import AccessTokenService from 'Services/Token/AccessTokenService'
 import TokenExpiredError from 'Services/Token/Errors/TokenExpiredError'
 import RefreshTokenService from 'Services/Token/RefreshTokenService'
@@ -11,7 +11,7 @@ import UserExistsError from '../Errors/UserExistsError'
 import UserService from '../UserService'
 
 vi.mock('Repositories/UserRepository')
-vi.mock('Services/PasswordHashService')
+vi.mock('Services/PasswordHashService/PasswordHashService')
 vi.mock('Services/Token/AccessTokenService')
 vi.mock('Services/Token/RefreshTokenService')
 
@@ -48,8 +48,6 @@ describe('UserService', () => {
 			refreshTokenServiceMock,
 		)
 
-		vi.clearAllMocks()
-
 		user = {
 			id: 1,
 			username,
@@ -58,6 +56,10 @@ describe('UserService', () => {
 			role,
 			createdAt: new Date(),
 		}
+	})
+
+	afterEach(() => {
+		vi.clearAllMocks()
 	})
 
 	it('should register a new user', async () => {

@@ -4,7 +4,7 @@ import ServiceError from 'Services/Errors/ServiceError'
 
 import Logger from 'Utils/Logger/Logger'
 
-import Service from './Service'
+import Service from '../Service'
 
 class PasswordHashService extends Service {
 	async hash(password: string): Promise<string> {

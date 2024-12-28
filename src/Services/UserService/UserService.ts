@@ -1,5 +1,5 @@
 import UserRepository from 'Repositories/UserRepository'
-import PasswordHashService from 'Services/PasswordHashService'
+import PasswordHashService from 'Services/PasswordHashService/PasswordHashService'
 import AccessTokenService, { IAccessTokenJWTPayload } from 'Services/Token/AccessTokenService'
 import RefreshTokenService, { IRefreshTokenJWTPayload } from 'Services/Token/RefreshTokenService'
 
